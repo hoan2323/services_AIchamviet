@@ -52,6 +52,43 @@ def run_tests():
     print(f"   Status: {r.status_code} | Thoi gian: {t1-t0:.2f}s")
     print(f"   Co giao phan hoi: {r.json().get('reply')}")
 
+    # 3.5. Kiem tra Danh gia Cau tra loi Dong nghia (Semantic Answer Evaluation)
+    print("\n3.5. Kiem tra Danh gia Cau tra loi Dong nghia...")
+    
+    # Reset lai session de sach lich su truoc khi test cau hoi dong nghia
+    requests.post(f"{BASE}/api/reset")
+    requests.post(f"{BASE}/api/load-content", json={"content": STORY})
+    
+    # Ca A: Tra loi dong nghia nhung khac cach dien dat hoan toan
+    print("   [Case A] Co giao dat cau hoi trong lich su: 'Au Co sinh ra cai gi ha be?'")
+    print("            Be tra loi dong nghia: 'da no ra mot tram nguoi con'")
+    
+    # Mo phong co giao hoi de ghi vao history
+    requests.post(f"{BASE}/api/chat", json={"message": "Co giao hoi be: Au Co sinh ra cai gi ha be?"})
+    
+    # Be tra loi dong nghia
+    t0 = time.time()
+    r_ans_a = requests.post(f"{BASE}/api/chat", json={"message": "da no ra mot tram nguoi con"})
+    t1 = time.time()
+    reply_a = r_ans_a.json().get("reply", "")
+    print(f"   Status: {r_ans_a.status_code} | Thoi gian: {t1-t0:.2f}s")
+    print(f"   Phan hoi cua Co Giao: '{reply_a}'")
+    
+    # Ca B: Tra loi dung nhung tu ngu khac
+    print("\n   [Case B] Co giao dat cau hoi trong lich su: 'Lac Long Quan co hinh dang giong con gi?'")
+    print("            Be tra loi dong nghia: 'ong ay giong nhu mot con rong to lon'")
+    
+    # Mo phong co giao hoi de ghi vao history
+    requests.post(f"{BASE}/api/chat", json={"message": "Co giao hoi be: Lac Long Quan co hinh dang giong con gi?"})
+    
+    # Be tra loi dong nghia
+    t0 = time.time()
+    r_ans_b = requests.post(f"{BASE}/api/chat", json={"message": "ong ay giong nhu mot con rong to lon"})
+    t1 = time.time()
+    reply_b = r_ans_b.json().get("reply", "")
+    print(f"   Status: {r_ans_b.status_code} | Thoi gian: {t1-t0:.2f}s")
+    print(f"   Phan hoi cua Co Giao: '{reply_b}'")
+
     # 4. Classify Intent
     print("\n4. Goi API Classify Intent (Kiem tra do nhay phan loai y dinh)...")
     test_cases = [

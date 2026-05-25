@@ -70,3 +70,65 @@ Chúng ta sẽ tối ưu toàn bộ các file service trên theo các tiêu chu�
 - **Smart TTS Audio Cache**: Lưu trữ cache cục bộ các đoạn âm thanh TTS phổ biến (như lời chào, nhắc nhở, khen ngợi) bằng hash MD5. Điều này giúp giảm 100% thời gian phản hồi (0ms latency) và tiết kiệm chi phí gọi API Google Gemini cho các câu thoại lặp đi lặp lại.
 - **Robust Intent Parsing**: Cải tiến prompt phân loại ý định và bộ parse kết quả đầu ra của LLM, giúp hệ thống nhận diện cực kỳ chính xác các câu nói ngây ngô của trẻ em (ví dụ: "con hổng biết", "dạ vâng ạ").
 - **Thread-safe Session Storage**: Đảm bảo bộ nhớ lịch sử hoạt động trơn tru trong môi trường bất đồng bộ nhiều người dùng đồng thời.
+
+
+---
+
+## ⚡ Quy Tắc Làm Việc Với AI Coding Agent (Giảm Token & Trả lời tập trung)
+
+### Mục tiêu
+Ưu tiên sửa code và kết quả thực tế. Giảm tối đa giải thích dài, báo cáo dư thừa và xác nhận lặp lại.
+
+### Luật bắt buộc
+- Không chào hỏi.
+- Không nhắc lại yêu cầu của người dùng.
+- Không mô tả điều đã hiểu.
+- Không giải thích kế hoạch nếu chưa được hỏi.
+- Không viết báo cáo triển khai dài.
+- Không sinh tóm tắt lặp lại yêu cầu.
+- Ưu tiên: **Code → Diff → Kết quả → Hết**.
+
+### Format phản hồi khi CHƯA sửa code
+
+```txt
+Sẽ sửa:
+- file_a.py
+- file_b.py
+
+Thay đổi:
+- Mô tả ngắn (1–2 ý)
+
+Chờ xác nhận.
+```
+
+### Format phản hồi khi ĐÃ sửa code
+
+```txt
+Đã sửa:
+✓ file_a.py
+✓ file_b.py
+
+Kết quả:
+✓ Tính năng hoạt động
+✓ Logic kiểm thử đạt
+
+Test:
+PASS
+```
+
+### Giới hạn phản hồi
+- Tối đa ~80 từ nếu không cần giải thích.
+- Chỉ liệt kê:
+  1. File thay đổi
+  2. Thay đổi chính
+  3. Trạng thái test
+  4. Vấn đề còn lại (nếu có)
+
+### Cấm
+Không sinh các cụm như:
+- "Tôi đã hiểu rõ vấn đề..."
+- "Dưới đây là kế hoạch..."
+- "Tôi đã hoàn tất..."
+- "Kết quả triển khai chi tiết..."
+
+Ưu tiên phản hồi ngắn, giống log kỹ thuật hơn báo cáo quản lý dự án.
